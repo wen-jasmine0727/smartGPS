@@ -4,7 +4,7 @@ spring:
       driver-class-name: org.postgresql.Driver
       url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DATABASE:smart_logistics}
       username: ${POSTGRES_USERNAME:postgres}
-      password: ${DB_PASSWORD:}
+      password: ${DB_PASSWORD:123456}
   redis:
     host: ${REDIS_HOST:localhost}
     port: ${REDIS_PORT:6379}
