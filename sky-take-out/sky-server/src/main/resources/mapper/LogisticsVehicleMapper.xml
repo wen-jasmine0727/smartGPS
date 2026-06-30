@@ -6,6 +6,7 @@
 <mapper namespace="com.sky.logistics.mapper.LogisticsVehicleMapper">
 
     <sql id="VehicleColumns">
+        id,
         plate,
         vin_topic AS vinTopic,
         vehicle_type AS vehicleType,
@@ -56,6 +57,21 @@
         WHERE plate = #{plate}
     </select>
 
+    <select id="findById" resultType="com.sky.logistics.entity.Vehicle">
+        SELECT
+        <include refid="VehicleColumns"/>
+        FROM vehicles
+        WHERE id = #{id}
+    </select>
+
+    <select id="findByPlateExcludeId" resultType="com.sky.logistics.entity.Vehicle">
+        SELECT
+        <include refid="VehicleColumns"/>
+        FROM vehicles
+        WHERE plate = #{plate}
+          AND id &lt;&gt; #{id}
+    </select>
+
     <select id="findByDeviceImei" resultType="com.sky.logistics.entity.Vehicle">
         SELECT
         <include refid="VehicleColumns"/>
@@ -63,7 +79,26 @@
         WHERE device_imei = #{deviceImei}
     </select>
 
-    <insert id="insert" parameterType="com.sky.logistics.entity.Vehicle">
+    <select id="findByDeviceImeiExcludeId" resultType="com.sky.logistics.entity.Vehicle">
+        SELECT
+        <include refid="VehicleColumns"/>
+        FROM vehicles
+        WHERE device_imei = #{deviceImei}
+          AND id &lt;&gt; #{id}
+    </select>
+
+    <select id="countBindingById" resultType="java.lang.Long">
+        SELECT COUNT(1)
+        FROM cargo_vehicle_binding b
+        JOIN vehicles v ON v.plate = b.plate
+        WHERE v.id = #{id}
+    </select>
+
+    <insert id="insert"
+            parameterType="com.sky.logistics.entity.Vehicle"
+            useGeneratedKeys="true"
+            keyProperty="id"
+            keyColumn="id">
         INSERT INTO vehicles (
             plate,
             vin_topic,
@@ -90,5 +125,26 @@
             now()
         )
     </insert>
+
+    <update id="update" parameterType="com.sky.logistics.entity.Vehicle">
+        UPDATE vehicles
+        SET
+            plate = #{plate},
+            vin_topic = #{vinTopic},
+            vehicle_type = #{vehicleType},
+            capacity = #{capacity},
+            driver_name = #{driverName},
+            driver_phone = #{driverPhone},
+            device_imei = #{deviceImei},
+            status = #{status},
+            device_status = #{deviceStatus},
+            updated_at = now()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM vehicles
+        WHERE id = #{id}
+    </delete>
 
 </mapper>

@@ -19,7 +19,8 @@ CREATE TABLE users (
 );
 
 CREATE TABLE vehicles (
-  plate VARCHAR(32) PRIMARY KEY,
+  id BIGSERIAL PRIMARY KEY,
+  plate VARCHAR(32) UNIQUE NOT NULL,
   vin_topic VARCHAR(64) UNIQUE NOT NULL,
   vehicle_type VARCHAR(64),
   capacity INT,

@@ -84,7 +84,7 @@ interface VehiclePosition {
 | 功能 | 接口/协议 |
 |---|---|
 | 车辆列表 | `GET /vehicles` |
-| 车辆详情 | `GET /vehicles/{plate}` |
+| 车辆详情 | `GET /vehicles/{id}` |
 | 下发指令 | `POST /vehicles/{plate}/command` |
 | 指令状态 | `GET /vehicles/{plate}/command/{commandId}` |
 | WebSocket 指令回执 | `command.ack` |

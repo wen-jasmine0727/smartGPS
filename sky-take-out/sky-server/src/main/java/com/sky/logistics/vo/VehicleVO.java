@@ -8,6 +8,7 @@ import java.time.OffsetDateTime;
 @Data
 @Builder
 public class VehicleVO {
+    private Long id;
     private String plate;
     private String vinTopic;
     private String vehicleType;

@@ -1,14 +1,10 @@
-package com.sky.logistics.entity;
+package com.sky.logistics.dto;
 
 import lombok.Data;
 
-import java.time.OffsetDateTime;
-
 @Data
-public class Vehicle {
-    private Long id;
+public class VehicleUpdateDTO {
     private String plate;
-    private String vinTopic;
     private String vehicleType;
     private Integer capacity;
     private String driverName;
@@ -16,6 +12,4 @@ public class Vehicle {
     private String deviceImei;
     private String status;
     private String deviceStatus;
-    private OffsetDateTime createdAt;
-    private OffsetDateTime updatedAt;
 }

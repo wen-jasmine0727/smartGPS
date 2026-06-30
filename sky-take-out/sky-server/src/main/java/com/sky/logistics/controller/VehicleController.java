@@ -4,6 +4,7 @@ import com.sky.logistics.common.ApiResponse;
 import com.sky.logistics.common.PageResponse;
 import com.sky.logistics.dto.VehicleCreateDTO;
 import com.sky.logistics.dto.VehicleQueryDTO;
+import com.sky.logistics.dto.VehicleUpdateDTO;
 import com.sky.logistics.service.LogisticsStarterService;
 import com.sky.logistics.service.VehicleService;
 import com.sky.logistics.vo.VehicleVO;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RestController
@@ -49,8 +49,14 @@ public class VehicleController {
         return ApiResponse.success(vehicleService.page(queryDTO));
     }
 
-    @GetMapping("/{plate}")
-    @ApiOperation("获取车辆详情")
+    @GetMapping("/{id:[0-9]+}")
+    @ApiOperation("根据 ID 获取车辆详情")
+    public ApiResponse<VehicleVO> detailById(@PathVariable Long id) {
+        return ApiResponse.success(vehicleService.detailById(id));
+    }
+
+    @GetMapping("/plate/{plate}")
+    @ApiOperation("根据车牌获取车辆详情")
     public ApiResponse<VehicleVO> detail(@PathVariable String plate) {
         return ApiResponse.success(vehicleService.detail(plate));
     }
@@ -61,20 +67,17 @@ public class VehicleController {
         return ApiResponse.success(vehicleService.create(request));
     }
 
-    @PutMapping("/{plate}")
+    @PutMapping("/{id:[0-9]+}")
     @ApiOperation("修改车辆")
-    public ApiResponse<Map<String, Object>> update(@PathVariable String plate, @RequestBody Map<String, Object> request) {
-        if (request == null) {
-            request = new LinkedHashMap<>();
-        }
-        request.put("plate", plate);
-        return ApiResponse.success(request);
+    public ApiResponse<VehicleVO> update(@PathVariable Long id, @RequestBody VehicleUpdateDTO request) {
+        return ApiResponse.success(vehicleService.update(id, request));
     }
 
-    @DeleteMapping("/{plate}")
+    @DeleteMapping("/{id:[0-9]+}")
     @ApiOperation("删除车辆")
-    public ApiResponse<Map<String, Object>> delete(@PathVariable String plate) {
-        return ApiResponse.success(starterService.activeVehicleTask(plate));
+    public ApiResponse<Void> delete(@PathVariable Long id) {
+        vehicleService.delete(id);
+        return ApiResponse.success();
     }
 
     @GetMapping("/{plate}/active-task")
