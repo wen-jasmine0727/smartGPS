@@ -18,4 +18,8 @@ public interface LogisticsVehicleMapper {
                @Param("keyword") String keyword);
 
     Vehicle findByPlate(@Param("plate") String plate);
+
+    Vehicle findByVinTopic(@Param("vinTopic") String vinTopic);
+
+    Vehicle findByImei(@Param("imei") String imei);
 }

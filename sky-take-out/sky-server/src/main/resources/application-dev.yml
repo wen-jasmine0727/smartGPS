@@ -10,6 +10,11 @@ spring:
     port: ${REDIS_PORT:6379}
     password: ${REDIS_PASSWORD:}
     database: ${REDIS_DATABASE:0}
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    consumer:
+      group-id: ${KAFKA_CONSUMER_GROUP:logistics-consumer-group}
+      auto-offset-reset: earliest
 
 sky:
   datasource:
@@ -18,7 +23,7 @@ sky:
     port: ${POSTGRES_PORT:5432}
     database: ${POSTGRES_DATABASE:smart_logistics}
     username: ${POSTGRES_USERNAME:postgres}
-    password: ${DB_PASSWORD:}
+    password: ${DB_PASSWORD:123456}
   alioss:
     endpoint: ${ALIOSS_ENDPOINT:local}
     access-key-id: ${ALIOSS_ACCESS_KEY_ID:local}
@@ -39,6 +44,20 @@ sky:
     weChatPayCertFilePath: ${WECHAT_PAY_CERT_FILE_PATH:local}
     notifyUrl: ${WECHAT_NOTIFY_URL:local}
     refundNotifyUrl: ${WECHAT_REFUND_NOTIFY_URL:local}
+
+mqtt:
+  broker-url: ${MQTT_BROKER_URL:tcp://localhost:1883}
+  client-id: ${MQTT_CLIENT_ID:backend-realtime-service-01}
+  username: ${MQTT_USERNAME:}
+  password: ${MQTT_PASSWORD:}
+
+# TimescaleDB 时序库（第二数据源），存储 gps_points 和 device_heartbeats
+timescaledb:
+  datasource:
+    url: jdbc:postgresql://${TIMESCALEDB_HOST:localhost}:${TIMESCALEDB_PORT:5433}/${TIMESCALEDB_DATABASE:gps}
+    username: ${TIMESCALEDB_USERNAME:postgres}
+    password: ${TIMESCALEDB_PASSWORD:123456}
+    driver-class-name: org.postgresql.Driver
 
 logging:
   level:
