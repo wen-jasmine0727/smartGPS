@@ -1,0 +1,85 @@
+# 智慧物流 IoT 平台 · 基础设施
+# 启动：docker-compose up -d
+# 停止：docker-compose down
+
+services:
+
+  # PostgreSQL + TimescaleDB + pgvector
+  postgres:
+    image: timescale/timescaledb:latest-pg16
+    container_name: logistics-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "123456"
+      POSTGRES_DB: smart_logistics
+    volumes:
+      # 数据持久化，容器删了数据不丢
+      - postgres-data:/var/lib/postgresql/data
+      # 启动时自动执行建表 SQL
+      - ./sky-take-out/sky-server/src/main/resources/sql/backend1_business_init.sql:/docker-entrypoint-initdb.d/01_backend1.sql
+      - ./sky-take-out/sky-server/src/main/resources/sql/backend3_init.sql:/docker-entrypoint-initdb.d/02_backend3.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d smart_logistics"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Redis 缓存
+  redis:
+    image: redis:7-alpine
+    container_name: logistics-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # EMQX MQTT Broker
+  emqx:
+    image: emqx/emqx:latest
+    container_name: logistics-emqx
+    ports:
+      - "1883:1883"     # MQTT 协议端口
+      - "18083:18083"   # Dashboard 管理页面
+    environment:
+      EMQX_DASHBOARD__DEFAULT_USERNAME: admin
+      EMQX_DASHBOARD__DEFAULT_PASSWORD: public
+    volumes:
+      - emqx-data:/opt/emqx/data
+    healthcheck:
+      test: ["CMD", "/opt/emqx/bin/emqx", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # MinIO 对象存储
+  minio:
+    image: minio/minio:latest
+    container_name: logistics-minio
+    ports:
+      - "9000:9000"     # API 端口
+      - "9001:9001"     # Console 管理页面
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio-data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+# 数据卷
+volumes:
+  postgres-data:
+  redis-data:
+  emqx-data:
+  minio-data:
