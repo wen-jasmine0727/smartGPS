@@ -18,4 +18,7 @@ public interface LogisticsVehicleMapper {
                @Param("keyword") String keyword);
 
     Vehicle findByPlate(@Param("plate") String plate);
+    int insert(Vehicle vehicle);
+
+    Vehicle findByDeviceImei(@Param("deviceImei") String deviceImei);
 }

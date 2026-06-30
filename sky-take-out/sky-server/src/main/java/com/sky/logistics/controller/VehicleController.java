@@ -2,6 +2,7 @@ package com.sky.logistics.controller;
 
 import com.sky.logistics.common.ApiResponse;
 import com.sky.logistics.common.PageResponse;
+import com.sky.logistics.dto.VehicleCreateDTO;
 import com.sky.logistics.dto.VehicleQueryDTO;
 import com.sky.logistics.service.LogisticsStarterService;
 import com.sky.logistics.service.VehicleService;
@@ -56,8 +57,8 @@ public class VehicleController {
 
     @PostMapping
     @ApiOperation("新增车辆")
-    public ApiResponse<Map<String, Object>> create(@RequestBody Map<String, Object> request) {
-        return ApiResponse.success(starterService.createVehicle(request));
+    public ApiResponse<VehicleVO> create(@RequestBody VehicleCreateDTO request) {
+        return ApiResponse.success(vehicleService.create(request));
     }
 
     @PutMapping("/{plate}")

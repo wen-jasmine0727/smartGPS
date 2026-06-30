@@ -56,4 +56,39 @@
         WHERE plate = #{plate}
     </select>
 
+    <select id="findByDeviceImei" resultType="com.sky.logistics.entity.Vehicle">
+        SELECT
+        <include refid="VehicleColumns"/>
+        FROM vehicles
+        WHERE device_imei = #{deviceImei}
+    </select>
+
+    <insert id="insert" parameterType="com.sky.logistics.entity.Vehicle">
+        INSERT INTO vehicles (
+            plate,
+            vin_topic,
+            vehicle_type,
+            capacity,
+            driver_name,
+            driver_phone,
+            device_imei,
+            status,
+            device_status,
+            created_at,
+            updated_at
+        ) VALUES (
+            #{plate},
+            #{vinTopic},
+            #{vehicleType},
+            #{capacity},
+            #{driverName},
+            #{driverPhone},
+            #{deviceImei},
+            #{status},
+            #{deviceStatus},
+            now(),
+            now()
+        )
+    </insert>
+
 </mapper>
