@@ -140,6 +140,15 @@
         ORDER BY created_at DESC
     </select>
 
+    <select id="findActiveCargoIdsByVehicleId"
+            resultType="java.lang.String">
+        SELECT cargo_id as cargoId
+        FROM cargo_vehicle_binding
+        WHERE vehicle_id = #{vehicleId}
+          AND status = 'ACTIVE'
+        ORDER BY bound_at DESC
+    </select>
+
     <insert id="insert" parameterType="com.sky.logistics.entity.Cargo">
         INSERT INTO cargo (
             cargo_id,

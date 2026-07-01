@@ -3,6 +3,7 @@ package com.sky.logistics.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sky.logistics.dto.GpsData;
 import com.sky.logistics.entity.Vehicle;
+import com.sky.logistics.mapper.LogisticsCargoMapper;
 import com.sky.logistics.mapper.LogisticsVehicleMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,7 +28,8 @@ import java.util.Map;
 @Service
 @Slf4j
 public class GpsKafkaConsumer {
-
+    @Autowired
+    private LogisticsCargoMapper cargoMapper;
     @Autowired
     @Qualifier("timescaleJdbcTemplate")
     private JdbcTemplate timescaleJdbc;
@@ -72,16 +75,16 @@ public class GpsKafkaConsumer {
                     ? Instant.ofEpochSecond(gps.getTs())
                     : Instant.now();
 
-            // TODO: 查询当前 active cargo，目前暂用 vinTopic 映射
-            String cargoId = null; // 后续关联 cargo_vehicle_binding 查询
+            // 一车多货时，同一个 GPS 点为每个正在绑定的货物写一条轨迹。
+            List<String> cargoIds = cargoMapper.findActiveCargoIdsByVehicleId(vehicle.getId());
 
-            timescaleJdbc.update(
-                "INSERT INTO gps_points (time, vehicle_id, cargo_id, imei, lat, lng, speed, heading, accuracy) "
-                + "VALUES (?::timestamptz, ?, ?, ?, ?, ?, ?, ?, ?)",
-                ts, vehicle.getId(), cargoId, gps.getImei(),
-                gps.getLat(), gps.getLng(),
-                gps.getSpeed(), gps.getHeading(), gps.getAccuracy()
-            );
+            if (cargoIds == null || cargoIds.isEmpty()) {
+                insertGpsPoint(ts, vehicle.getId(), null, gps);
+            } else {
+                for (String cargoId : cargoIds) {
+                    insertGpsPoint(ts, vehicle.getId(), cargoId, gps);
+                }
+            }
 
             log.debug("GPS 已写入 TimescaleDB, vinTopic={}, lat={}, lng={}", vinTopic, gps.getLat(), gps.getLng());
 
@@ -91,6 +94,22 @@ public class GpsKafkaConsumer {
         } catch (Exception e) {
             log.error("消费 GPS 消息失败: {}", e.getMessage(), e);
         }
+    }
+
+    private void insertGpsPoint(Instant ts, Long vehicleId, String cargoId, GpsData gps) {
+        timescaleJdbc.update(
+                "INSERT INTO gps_points (time, vehicle_id, cargo_id, imei, lat, lng, speed, heading, accuracy) "
+                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                java.sql.Timestamp.from(ts),
+                vehicleId,
+                cargoId,
+                gps.getImei(),
+                gps.getLat(),
+                gps.getLng(),
+                gps.getSpeed(),
+                gps.getHeading(),
+                gps.getAccuracy()
+        );
     }
 
     /**

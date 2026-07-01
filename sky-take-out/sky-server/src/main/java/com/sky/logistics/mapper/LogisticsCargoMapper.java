@@ -39,4 +39,6 @@ public interface LogisticsCargoMapper {
     void insertStatusLog(CargoStatusLog cargoStatusLog);
 
     List<CargoStatusLog> findStatusLogsByCargoId(@Param("cargoId") String cargoId);
+
+    List<String> findActiveCargoIdsByVehicleId(@Param("vehicleId") Long vehicleId);
 }
