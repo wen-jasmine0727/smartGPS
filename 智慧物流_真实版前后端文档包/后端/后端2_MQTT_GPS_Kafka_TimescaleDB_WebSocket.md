@@ -63,6 +63,8 @@ MQTT GPS → Spring MQTT Consumer → Kafka gps-points → TimescaleDB gps_point
 }
 ```
 
+说明：`ts` 是设备上报时间戳，当前后端写入 TimescaleDB `gps_points.time` 时使用服务端接收时间，便于本地调试时每次发送都生成新的轨迹时间。
+
 ### Heartbeat
 
 ```json

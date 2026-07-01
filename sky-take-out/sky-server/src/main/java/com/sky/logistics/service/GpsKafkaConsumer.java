@@ -70,10 +70,8 @@ public class GpsKafkaConsumer {
                 // 不丢弃，仅记录
             }
 
-            // 2. 写入 TimescaleDB gps_points 表
-            Instant ts = (gps.getTs() != null)
-                    ? Instant.ofEpochSecond(gps.getTs())
-                    : Instant.now();
+            // 2. 写入 TimescaleDB gps_points 表。入库时间使用服务端接收时间，避免测试消息复用固定 ts 导致轨迹时间不变化。
+            Instant ts = Instant.now();
 
             // 一车多货时，同一个 GPS 点为每个正在绑定的货物写一条轨迹。
             List<String> cargoIds = cargoMapper.findActiveCargoIdsByVehicleId(vehicle.getId());
