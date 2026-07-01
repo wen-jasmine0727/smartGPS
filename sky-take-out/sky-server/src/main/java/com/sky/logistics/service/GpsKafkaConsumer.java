@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.LinkedHashMap;
@@ -78,7 +79,7 @@ public class GpsKafkaConsumer {
             timescaleJdbc.update(
                 "INSERT INTO gps_points (time, vehicle_id, cargo_id, imei, lat, lng, speed, heading, accuracy) "
                 + "VALUES (?::timestamptz, ?, ?, ?, ?, ?, ?, ?, ?)",
-                ts, vehicle.getId(), cargoId, gps.getImei(),
+                Timestamp.from(ts), vehicle.getId(), cargoId, gps.getImei(),
                 gps.getLat(), gps.getLng(),
                 gps.getSpeed(), gps.getHeading(), gps.getAccuracy()
             );
@@ -114,6 +115,10 @@ public class GpsKafkaConsumer {
             redisTemplate.opsForValue().set(key, json, Duration.ofHours(24));
 
             log.debug("Redis 最新位置已更新, key={}", key);
+
+            // 4. WebSocket 推送给前端
+            com.sky.logistics.controller.LogisticsWebSocketServer.broadcast("vehicle.position", json);
+
         } catch (Exception e) {
             log.error("Redis 更新失败: {}", e.getMessage(), e);
         }

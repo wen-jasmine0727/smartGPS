@@ -1,12 +1,12 @@
 spring:
   datasource:
-    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DATABASE:smart_logistics}
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DATABASE:logistics}
     driver-class-name: org.postgresql.Driver
     username: ${POSTGRES_USERNAME:postgres}
     password: ${DB_PASSWORD:123456}
     druid:
       driver-class-name: org.postgresql.Driver
-      url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DATABASE:smart_logistics}
+      url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DATABASE:logistics}
       username: ${POSTGRES_USERNAME:postgres}
       password: ${DB_PASSWORD:123456}
   redis:
@@ -25,7 +25,7 @@ sky:
     driver-class-name: org.postgresql.Driver
     host: ${POSTGRES_HOST:localhost}
     port: ${POSTGRES_PORT:5432}
-    database: ${POSTGRES_DATABASE:smart_logistics}
+    database: ${POSTGRES_DATABASE:logistics}
     username: ${POSTGRES_USERNAME:postgres}
     password: ${DB_PASSWORD:123456}
   alioss:

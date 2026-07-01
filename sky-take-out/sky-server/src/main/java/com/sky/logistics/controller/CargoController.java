@@ -7,6 +7,7 @@ import com.sky.logistics.dto.CargoCreateDTO;
 import com.sky.logistics.dto.CargoQueryDTO;
 import com.sky.logistics.service.CargoService;
 import com.sky.logistics.service.LogisticsStarterService;
+import com.sky.logistics.service.TrackingService;
 import com.sky.logistics.vo.CargoVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -29,10 +30,14 @@ public class CargoController {
 
     private final LogisticsStarterService starterService;
     private final CargoService cargoService;
+    private final TrackingService trackingService;
 
-    public CargoController(LogisticsStarterService starterService, CargoService cargoService) {
+    public CargoController(LogisticsStarterService starterService,
+                           CargoService cargoService,
+                           TrackingService trackingService) {
         this.starterService = starterService;
         this.cargoService = cargoService;
+        this.trackingService = trackingService;
     }
 
     @GetMapping
@@ -86,26 +91,26 @@ public class CargoController {
     }
 
     @GetMapping("/{cargoId}/position")
-    @ApiOperation("获取货物当前位置")
+    @ApiOperation("获取货物当前位置（Redis 实时）")
     public ApiResponse<Map<String, Object>> position(@PathVariable String cargoId) {
-        return ApiResponse.success(starterService.cargoPosition(cargoId));
+        return ApiResponse.success(trackingService.getPosition(cargoId));
     }
 
     @GetMapping("/{cargoId}/trajectory")
-    @ApiOperation("获取货物轨迹")
+    @ApiOperation("获取货物历史轨迹（TimescaleDB）")
     public ApiResponse<Map<String, Object>> trajectory(@PathVariable String cargoId) {
-        return ApiResponse.success(starterService.cargoTrajectory(cargoId));
+        return ApiResponse.success(trackingService.getTrajectory(cargoId));
     }
 
     @GetMapping("/{cargoId}/eta")
-    @ApiOperation("获取货物 ETA")
+    @ApiOperation("获取货物 ETA（Haversine 距离计算）")
     public ApiResponse<Map<String, Object>> eta(@PathVariable String cargoId) {
-        return ApiResponse.success(starterService.cargoEta(cargoId));
+        return ApiResponse.success(trackingService.getEta(cargoId));
     }
 
     @GetMapping("/{cargoId}/timeline")
-    @ApiOperation("获取货物时间线")
+    @ApiOperation("获取货物运输时间线")
     public ApiResponse<Map<String, Object>> timeline(@PathVariable String cargoId) {
-        return ApiResponse.success(starterService.cargoTimeline(cargoId));
+        return ApiResponse.success(trackingService.getTimeline(cargoId));
     }
 }
