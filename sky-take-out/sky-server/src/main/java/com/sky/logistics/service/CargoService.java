@@ -2,7 +2,10 @@ package com.sky.logistics.service;
 
 import com.sky.logistics.common.PageResponse;
 import com.sky.logistics.dto.*;
+import com.sky.logistics.vo.CargoStatusLogVO;
 import com.sky.logistics.vo.CargoVO;
+
+import java.util.List;
 
 public interface CargoService {
 
@@ -18,4 +21,5 @@ public interface CargoService {
 
     CargoVO updateStatus(String CargoID,CargoStatusUpdateDTO updateDTO);
 
+    List<CargoStatusLogVO> getStatusLogs(String cargoId);
 }

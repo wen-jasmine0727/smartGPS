@@ -124,7 +124,21 @@
         LIMIT 1
     </select>
 
-
+    <select id="findStatusLogsByCargoId"
+            resultType="com.sky.logistics.entity.CargoStatusLog">
+        SELECT
+            id,
+            cargo_id as cargoId,
+            status,
+            lat,
+            lng,
+            remark,
+            operator_id as operatorId,
+            created_at as createdAt
+        FROM cargo_status_logs
+        WHERE cargo_id = #{cargoId}
+        ORDER BY created_at DESC
+    </select>
 
     <insert id="insert" parameterType="com.sky.logistics.entity.Cargo">
         INSERT INTO cargo (

@@ -5,6 +5,7 @@ import com.sky.logistics.common.PageResponse;
 import com.sky.logistics.dto.*;
 import com.sky.logistics.service.CargoService;
 import com.sky.logistics.service.LogisticsStarterService;
+import com.sky.logistics.vo.CargoStatusLogVO;
 import com.sky.logistics.vo.CargoVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -79,8 +80,8 @@ public class CargoController {
 
     @GetMapping("/{cargoId}/status-logs")
     @ApiOperation("获取货物状态日志")
-    public ApiResponse<List<Map<String, Object>>> statusLogs(@PathVariable String cargoId) {
-        return ApiResponse.success(starterService.cargoStatusLogs(cargoId));
+    public ApiResponse<List<CargoStatusLogVO>> statusLogs(@PathVariable String cargoId) {
+        return ApiResponse.success(cargoService.getStatusLogs(cargoId));
     }
 
     @GetMapping("/{cargoId}/position")

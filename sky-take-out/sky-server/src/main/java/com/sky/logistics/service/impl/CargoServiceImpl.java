@@ -7,6 +7,7 @@ import com.sky.logistics.mapper.LogisticsCargoMapper;
 import com.sky.logistics.mapper.LogisticsVehicleMapper;
 import com.sky.logistics.service.CargoService;
 import com.sky.logistics.vo.CargoLocationVO;
+import com.sky.logistics.vo.CargoStatusLogVO;
 import com.sky.logistics.vo.CargoVO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -205,6 +206,32 @@ public class CargoServiceImpl implements CargoService {
                 .build();
         cargoMapper.insertStatusLog(log);
         return detail(SafeID);
+    }
+
+    @Override
+    public List<CargoStatusLogVO> getStatusLogs(String cargoId) {
+        String safeId = trimToNull(cargoId);
+        if(safeId == null){
+            throw new IllegalArgumentException("货物id不能为空");
+        }
+
+        return cargoMapper.findStatusLogsByCargoId(safeId)
+                .stream()
+                .map(this::toStatusVO)
+                .collect(Collectors.toList());
+    }
+
+    private CargoStatusLogVO toStatusVO(CargoStatusLog log) {
+        return CargoStatusLogVO.builder()
+                .id(log.getId())
+                .cargoId(log.getCargoId())
+                .status(log.getStatus())
+                .lat(log.getLat())
+                .lng(log.getLng())
+                .remark(log.getRemark())
+                .operatorId(log.getOperatorId())
+                .createdAt(log.getCreatedAt())
+                .build();
     }
 
     private boolean isValidCargoStatus(String status) {

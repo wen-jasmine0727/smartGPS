@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Data
 @ApiModel("更新货物状态请求")
 public class CargoStatusUpdateDTO {
@@ -12,10 +14,10 @@ public class CargoStatusUpdateDTO {
     private String status;
 
     @ApiModelProperty(value = "纬度", example = "31.2304")
-    private Double lat;
+    private BigDecimal lat;
 
     @ApiModelProperty(value = "经度", example = "121.4737")
-    private Double lng;
+    private BigDecimal lng;
 
     @ApiModelProperty(value = "备注", example = "车辆已离开上海仓储中心")
     private String remark;
