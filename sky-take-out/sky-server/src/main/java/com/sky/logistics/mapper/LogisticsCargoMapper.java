@@ -30,4 +30,8 @@ public interface LogisticsCargoMapper {
     void insertBinding(CargoVehicleBinding binding);
 
     void updateCargoStatus(@Param("cargoId") String cargoId, @Param("status") String status);
+
+    CargoVehicleBinding findActiveBindingByCargoId(@Param("cargoId") String cargoId);
+
+    int unbindById(@Param("id") String id);
 }

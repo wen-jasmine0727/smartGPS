@@ -18,6 +18,7 @@
 │   ├── 后端1_基础业务登录车辆货.md
 │   ├── 后端1_数据库表结构.md
 │   ├── 后端2_MQTT_GPS_Kafka_TimescaleDB_WebSocket.md
+│   ├── MQTT_本地调试指南.md
 │   └── 后端3_告警调度设备在线RAG部署.md
 └── 前端/
     ├── 前端1_货物追踪车辆调度WebSocket.md

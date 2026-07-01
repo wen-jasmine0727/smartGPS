@@ -1,10 +1,7 @@
 package com.sky.logistics.service.impl;
 
 import com.sky.logistics.common.PageResponse;
-import com.sky.logistics.dto.CargoBindDTO;
-import com.sky.logistics.dto.CargoCreateDTO;
-import com.sky.logistics.dto.CargoLocationDTO;
-import com.sky.logistics.dto.CargoQueryDTO;
+import com.sky.logistics.dto.*;
 import com.sky.logistics.entity.Cargo;
 import com.sky.logistics.entity.CargoRecord;
 import com.sky.logistics.entity.CargoVehicleBinding;
@@ -147,6 +144,33 @@ public class CargoServiceImpl implements CargoService {
         cargoMapper.insertBinding(binding);
         cargoMapper.updateCargoStatus(cargoId, "LOADED");
 
+        return detail(cargoId);
+    }
+
+    @Override
+    @Transactional
+    public CargoVO unbind(CargoUnbindDTO unbindDTO) {
+        if (unbindDTO == null){
+            throw new IllegalArgumentException("解绑信息不能为空");
+        }
+        String cargoId = trimToNull(unbindDTO.getCargoId());
+        if (!StringUtils.hasText(cargoId)) {
+            throw new IllegalArgumentException("货物 ID 不能为空");
+        }
+        CargoRecord cargo = cargoMapper.findByCargoId(cargoId);
+        if (cargo == null) {
+            throw new IllegalArgumentException("货物不存在");
+        }
+        CargoVehicleBinding binding = cargoMapper.findActiveBindingByCargoId(cargoId);
+        if (binding == null) {
+            throw new IllegalArgumentException("货物当前没有绑定车辆");
+        }
+        int affected = cargoMapper.unbindById(binding.getId());
+        if (affected <= 0) {
+            throw new IllegalArgumentException("货物解绑失败");
+        }
+
+        cargoMapper.updateCargoStatus(cargoId, "CREATED");
         return detail(cargoId);
     }
 

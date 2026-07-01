@@ -5,6 +5,7 @@ import com.sky.logistics.common.PageResponse;
 import com.sky.logistics.dto.CargoBindDTO;
 import com.sky.logistics.dto.CargoCreateDTO;
 import com.sky.logistics.dto.CargoQueryDTO;
+import com.sky.logistics.dto.CargoUnbindDTO;
 import com.sky.logistics.service.CargoService;
 import com.sky.logistics.service.LogisticsStarterService;
 import com.sky.logistics.vo.CargoVO;
@@ -69,8 +70,8 @@ public class CargoController {
 
     @PostMapping("/unbind")
     @ApiOperation("解绑货物与车辆")
-    public ApiResponse<Map<String, Object>> unbind(@RequestBody Map<String, Object> request) {
-        return ApiResponse.success(starterService.unbindCargo(request));
+    public ApiResponse<CargoVO> unbind(@RequestBody CargoUnbindDTO request) {
+        return ApiResponse.success(cargoService.unbind(request));
     }
 
     @PutMapping("/{cargoId}/status")

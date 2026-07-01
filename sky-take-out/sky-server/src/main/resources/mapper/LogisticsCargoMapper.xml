@@ -88,6 +88,23 @@
           AND status = 'ACTIVE'
     </select>
 
+
+    <select id="findActiveBindingByCargoId" resultType="com.sky.logistics.entity.CargoVehicleBinding">
+        SELECT
+            id,
+            cargo_id AS cargoId,
+            vehicle_id AS vehicleId,
+            status,
+            bound_at AS boundAt,
+            unbound_at AS unboundAt
+        FROM cargo_vehicle_binding
+        WHERE cargo_id = #{cargoId}
+          AND status = 'ACTIVE'
+        LIMIT 1
+    </select>
+
+
+
     <insert id="insert" parameterType="com.sky.logistics.entity.Cargo">
         INSERT INTO cargo (
             cargo_id,
@@ -144,5 +161,11 @@
             updated_at = now()
         WHERE cargo_id = #{cargoId}
     </update>
-
+    <update id="unbindById">
+        UPDATE cargo_vehicle_binding
+        SET status = 'UNBOUND',
+            unbound_at = now()
+        WHERE id = #{id}
+          AND status = 'ACTIVE'
+    </update>
 </mapper>
